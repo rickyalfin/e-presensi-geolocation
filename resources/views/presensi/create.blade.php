@@ -44,9 +44,17 @@
     </div>
     <div class="row">
         <div class="col">
+            @if ($cek > 0)
+            <button id="takeabsen" class="btn btn-danger btn-block">
+                <ion-icon name="camera-outline"></ion-icon>
+                Absen Pulang
+            </button>
+            @else
             <button id="takeabsen" class="btn btn-primary btn-block">
                 <ion-icon name="camera-outline"></ion-icon>
-                Absen Masuk</button>
+                Absen Masuk
+            </button>
+            @endif
         </div>
     </div>
     
@@ -96,5 +104,42 @@
         function errorCallback() {
 
         }
+
+        $('#takeabsen').click(function(e){
+            // untuk mencapture foto saat absen
+            Webcam.snap(function(uri) {
+                image = uri; // jadi image akan berisi file gambar, cuman dalam bentuk enkripsi / endcode base64
+            });
+            var lokasi = $("#lokasi").val();
+            //proses penyimpanan data menggunakan ajax
+            $.ajax({
+                type : 'POST',
+                url  : '/presensi/store',
+                data : {
+                    _token : "{{ csrf_token() }}",
+                    image : image,
+                    lokasi : lokasi
+                },
+                cache : false,
+                success :  function(respond){
+                    var status = respond.split("|");
+                    if (status[0] == "success") {
+                        Swal.fire({
+                        title: 'Berhasil !',
+                        text: status[1],
+                        icon: 'success'
+                    })
+                    setTimeout("location.href='/dashboard'",3000);
+                    }else{
+                        Swal.fire({
+                        title: 'Error !',
+                        text: 'Maaf Gagal Absen, Silahkan Hubungi IT',
+                        icon: 'error'
+                    })
+                    }
+                }
+            });
+        });
+
     </script>
 @endpush
