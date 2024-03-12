@@ -72,6 +72,9 @@
     <audio id="notifikasi_out">
         <source src="{{ asset('assets/sound/notifikasi_out_female.mp3') }}" type="audio/mpeg">
     </audio>
+    <audio id="notifikasi_radius">
+        <source src="{{ asset('assets/sound/notifikasi_radius.mp3') }}" type="audio/mpeg">
+    </audio>
 @endsection
 
 @push('myscript')
@@ -79,6 +82,7 @@
 
         var notifikasi_in = document.getElementById('notifikasi_in');
         var notifikasi_out = document.getElementById('notifikasi_out');
+        var notifikasi_radius = document.getElementById('notifikasi_radius');
         Webcam.set({
             height: 480,
             width: 640,
@@ -104,11 +108,12 @@
             // marker
             var marker = L.marker([position.coords.latitude , position.coords.longitude]).addTo(map);
             // Radius lokasi -->
-            var circle = L.circle([position.coords.latitude , position.coords.longitude], {
+            // var circle = L.circle([-7.0932457259068356 , 110.30030361183256], {
+            var circle = L.circle([-7.2574719 , 112.7520883], {
                 color: 'red',
                 fillColor: '#f03',
                 fillOpacity: 0.5,
-                // mengatur jarak radius menggunakan satuan meter
+                // mengatur jarak radius circle menggunakan satuan meter
                 radius: 20
 }).addTo(map);
         }
@@ -147,11 +152,14 @@
                     })
                     setTimeout("location.href='/dashboard'",3000);
                     }else{
+                        if (status[2]=="radius") {
+                            notifikasi_radius.play();
+                        }
                         Swal.fire({
-                        title: 'Error !',
-                        text: 'Maaf Gagal Absen, Silahkan Hubungi IT',
-                        icon: 'error'
-                    })
+                            title: 'Error !',
+                            text: status[1],
+                            icon: 'error'
+                        })
                     }
                 }
             });

@@ -23,7 +23,19 @@ class PresensiController extends Controller
         $nik = Auth::guard('karyawan')->user()->nik;
         $tgl_presensi = date("Y-m-d");
         $jam = date("H:i:s");
+        // $latitudekantor = -7.0932457259068356;
+        // $longitudekantor = 110.30030361183256;
+        $latitudekantor = -7.2574719;
+        $longitudekantor = 112.7520883;
+
         $lokasi = $request->lokasi;
+        $lokasi_user = explode(",", $lokasi);
+        $latitudeuser = $lokasi_user[0];
+        $longitudeuser = $lokasi_user[1];
+
+        $jarak = $this->distance($latitudekantor, $longitudekantor, $latitudeuser, $longitudeuser);
+        $radius = round($jarak["meters"]);
+
         $image = $request->image;
         // lokasi penyimpanan  gambar di folder public/uploads/absensi
         $folderpath = 'public/uploads/absensi/';
@@ -38,36 +50,57 @@ class PresensiController extends Controller
 
         // jika karyawan tersebut sudah melakukan absen, maka perintah yang dijalankan bukan perintah menyimpan lagi. Tapi perintah untuk mengupdate data
         $cek = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->count();
-        if ($cek > 0) {
-            $data_pulang = [
-                'jam_out' => $jam,
-                'foto_out' => $fileName,
-                'lokasi_out' => $lokasi,
-            ];
-            // jika update berhasil maka mereturn 0 dan menyimpan file foto ketika pulang
-            $update = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->update($data_pulang);
-            if ($update) {
-                echo "success|Terimakasih, Hati-hati Di Jalan|out";
-                Storage::put($file, $image_base64);
-            } else {
-                echo "error|Maaf Gagal Absen, Hubungi Tim IT|out";
-            }
+        // Sebelum pengecekan absen dibawah, melakukan cek dulu radius jaraknya
+        if ($radius > 20) {
+            echo "error|Maaf Anda Berada Diluar Radius, Jarak Anda " . $radius . " Meter Dari Kantor|radius";
         } else {
-            // jika data masih kosong (belum absen), maka yang dijalankan adalah proses penyimpanan data
-            $data = [
-                'nik' => $nik,
-                'tgl_presensi' => $tgl_presensi,
-                'jam_in' => $jam,
-                'foto_in' => $fileName,
-                'lokasi_in' => $lokasi,
-            ];
-            $simpan = DB::table('presensi')->insert($data);
-            if ($simpan) {
-                echo "success|Terimakasih, Selamat Bekerja|in";
-                Storage::put($file, $image_base64);
+            if ($cek > 0) {
+                $data_pulang = [
+                    'jam_out' => $jam,
+                    'foto_out' => $fileName,
+                    'lokasi_out' => $lokasi,
+                ];
+                // jika update berhasil maka mereturn 0 dan menyimpan file foto ketika pulang
+                $update = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->update($data_pulang);
+                if ($update) {
+                    echo "success|Terimakasih, Hati-hati Di Jalan|out";
+                    Storage::put($file, $image_base64);
+                } else {
+                    echo "error|Maaf Gagal Absen, Hubungi Tim IT|out";
+                }
             } else {
-                echo "error|Maaf Gagal Absen, Hubungi Tim IT|in";
+                // jika data masih kosong (belum absen), maka yang dijalankan adalah proses penyimpanan data
+                $data = [
+                    'nik' => $nik,
+                    'tgl_presensi' => $tgl_presensi,
+                    'jam_in' => $jam,
+                    'foto_in' => $fileName,
+                    'lokasi_in' => $lokasi,
+                ];
+                $simpan = DB::table('presensi')->insert($data);
+                if ($simpan) {
+                    echo "success|Terimakasih, Selamat Bekerja|in";
+                    Storage::put($file, $image_base64);
+                } else {
+                    echo "error|Maaf Gagal Absen, Hubungi Tim IT|in";
+                }
             }
         }
     }
+
+    //Menghitung Jarak
+    public function distance($lat1, $lon1, $lat2, $lon2)
+    {
+        $theta = $lon1 - $lon2;
+        $miles = (sin(deg2rad($lat1)) * sin(deg2rad($lat2))) + (cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)));
+        $miles = acos($miles);
+        $miles = rad2deg($miles);
+        $miles = $miles * 60 * 1.1515;
+        $feet = $miles * 5280;
+        $yards = $feet / 3;
+        $kilometers = $miles * 1.609344;
+        $meters = $kilometers * 1000;
+        return compact('meters');
+    }
+
 }
