@@ -36,11 +36,18 @@ class PresensiController extends Controller
         $jarak = $this->distance($latitudekantor, $longitudekantor, $latitudeuser, $longitudeuser);
         $radius = round($jarak["meters"]);
 
+        $cek = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->count();
+        // mengecek apakah karyawan sudah melakukan absen, keterangan out. Jika belum maka in
+        if ($cek > 0) {
+            $ket = "out";
+        } else {
+            $ket = "in";
+        }
         $image = $request->image;
         // lokasi penyimpanan  gambar di folder public/uploads/absensi
         $folderpath = 'public/uploads/absensi/';
-        // merename nama file gambar sesuai dengan yang sudah ditentukan
-        $formatName = $nik . "-" . $tgl_presensi;
+        // merename nama file gambar sesuai dengan yang sudah ditentukan (jadi nanti formatnya adalah 'nik-tanggalpresensi-keterangan(in/out)')
+        $formatName = $nik . "-" . $tgl_presensi . "-" . $ket;
         // decode file image dari base64
         $image_parts = explode(";base64,", $image);
         $image_base64 = base64_decode($image_parts[1]);
@@ -49,7 +56,6 @@ class PresensiController extends Controller
         $file = $folderpath . $fileName;
 
         // jika karyawan tersebut sudah melakukan absen, maka perintah yang dijalankan bukan perintah menyimpan lagi. Tapi perintah untuk mengupdate data
-        $cek = DB::table('presensi')->where('tgl_presensi', $tgl_presensi)->where('nik', $nik)->count();
         // Sebelum pengecekan absen dibawah, melakukan cek dulu radius jaraknya
         if ($radius > 20) {
             echo "error|Maaf Anda Berada Diluar Radius, Jarak Anda " . $radius . " Meter Dari Kantor|radius";
