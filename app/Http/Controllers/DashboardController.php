@@ -14,14 +14,34 @@ class DashboardController extends Controller
         $tahunini = date('Y');
         $nik = Auth::guard('karyawan')->user()->nik;
         $presensihariini = DB::table('presensi')->where('nik', $nik)->where('tgl_presensi', $hariini)->first();
-        $historybulanini = DB::table('presensi')->whereRaw('MONTH(tgl_presensi)="' . $bulanini . '"')
+        $historybulanini = DB::table('presensi')
+            ->where('nik', $nik)
+            ->whereRaw('MONTH(tgl_presensi)="' . $bulanini . '"')
             ->whereRaw('YEAR(tgl_presensi)="' . $tahunini . '"')
             ->orderBy('tgl_presensi')
             ->get();
 
+        // Query ini berfungsi untuk menghitung berapa kali karyawan tersebut melakukan presensi pada bulan saat ini
+        $rekappresensi = DB::table('presensi')
+            ->selectRaw('COUNT(nik) as jmlhadir, SUM(IF(jam_in > "07:00",1,0)) as jmlterlambat')
+            ->where('nik', $nik)
+            ->whereRaw('MONTH(tgl_presensi)="' . $bulanini . '"')
+            ->whereRaw('YEAR(tgl_presensi)="' . $tahunini . '"')
+            ->first();
+
+        // Query leaderboard, akan menampilkan data presensi yang aktif pada hari ini
+        $leaderboard = DB::table('presensi')
+            ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik') // link kan / joinkan tabel presensi ke tabel karyawan melalui field 'nik'
+            ->where('tgl_presensi', $hariini)
+            ->orderBy('jam_in') // mengurutkan sesuai jam masuk (otomatis acs jika tidak ditambahkan desc)
+            ->get();
+
         // Nama bulan supaya dinamis sesuai dengan bulan yang berjalan (saat ini)
-        $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-        // Mengirim data ke view
-        return view('dashboard.dashboard', compact('presensihariini', 'historybulanini', 'namabulan', 'bulanini', 'tahunini'));
+        $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober",
+            "November", "Desember"];
+
+        // Mengirim data ke view (parsing)
+        return view('dashboard.dashboard', compact('presensihariini', 'historybulanini', 'namabulan', 'bulanini', 'tahunini',
+            'rekappresensi', 'leaderboard'));
     }
 }
