@@ -219,7 +219,6 @@
                     </div>
                     <div class="tab-pane fade" id="profile" role="tabpanel">
                         <ul class="listview image-listview">
-
                             @foreach ($leaderboard as $d)
                                 <li>
                                 <div class="item">

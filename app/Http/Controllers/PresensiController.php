@@ -171,4 +171,33 @@ class PresensiController extends Controller
             return Redirect::back()->with(['error' => 'Data Gagal Di Update']);
         }
     }
+
+    // function untuk membuat history presensi
+    public function history()
+    {
+        $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober",
+            "November", "Desember"];
+        return view('presensi.history', compact('namabulan'));
+    }
+
+    // function untuk gethistory
+    public function gethistory(Request $request)
+    {
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $nik = Auth::guard('karyawan')->user()->nik;
+
+        // query untuk menampilkan data dari history presensi dari karyawan tersebut
+        // artinya 'tampilkan data presensi dimana bulan presensinya = (contoh maret) dan tahunnya = (contoh 2024) maka
+        // tampilkan data presensi dimana tanggal presensi di bulan dan tahun tersebut dari nik yang sedang login
+        $history = DB::table('presensi')
+            ->whereRaw('MONTH(tgl_presensi)="' . $bulan . '"')
+            ->whereRaw('YEAR(tgl_presensi)="' . $tahun . '"')
+            ->where('nik', $nik)
+            ->orderBy('tgl_presensi')
+            ->get();
+
+        // jika sudah mendapatkan datanya tampilkan data tersebut ke dalam view
+        return view('presensi.gethistory', compact('history'));
+    }
 }
