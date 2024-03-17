@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 
 class PresensiController extends Controller
@@ -94,7 +96,7 @@ class PresensiController extends Controller
         }
     }
 
-    //Menghitung Jarak
+    // Menghitung Jarak
     public function distance($lat1, $lon1, $lat2, $lon2)
     {
         $theta = $lon1 - $lon2;
@@ -109,4 +111,64 @@ class PresensiController extends Controller
         return compact('meters');
     }
 
+    // methode atau function untuk edit profile
+    public function editprofile()
+    {
+        // mengambil data dari karyawan yang login dan menampilkan di view edit profile
+        $nik = Auth::guard('karyawan')->user()->nik;
+        $karyawan = DB::table('karyawan')->where('nik', $nik)->first();
+
+        // compact untuk mengirimkan query data ke view edit profile
+        return view('presensi.editprofile', compact('karyawan'));
+    }
+
+    // method atau function update profile
+    public function updateprofile(Request $request)
+    {
+        $nik = Auth::guard('karyawan')->user()->nik;
+        // menangkap nilai dari nama lengkap
+        $nama_lengkap = $request->nama_lengkap;
+        // menangkap nilai dari no_hp
+        $no_hp = $request->no_hp;
+        // menangkap nilai password dari password dan melakukan hash (enkrips)
+        $password = Hash::make($request->password);
+        // query untuk mengambil data karyawan
+        $karyawan = DB::table('karyawan')->where('nik', $nik)->first();
+        // hasFile, jika kita akan mengecek apakah form yang dikirimkan ada file foto yg diupload atau tidak
+        if ($request->hasFile('foto')) {
+            $foto = $nik . "." . $request->file('foto')->getClientOriginalExtension(); // format nama foto ketika diupload
+        } else {
+            $foto = $karyawan->foto; // jika kita tidak mengupload foto, maka data fotonya akan diambil dari data foto sebelumnya
+        }
+
+        // query untuk update
+        // buat kondisi jika password kosong (tidak dirubah), maka tidak akan mengupdate password
+        if (empty($request->password)) {
+            $data = [
+                'nama_lengkap' => $nama_lengkap,
+                'no_hp' => $no_hp,
+                'foto' => $foto,
+            ];
+        } else {
+            $data = [
+                'nama_lengkap' => $nama_lengkap,
+                'no_hp' => $no_hp,
+                'password' => $password,
+                'foto' => $foto,
+            ];
+        }
+
+        $update = DB::table('karyawan')->where('nik', $nik)->update($data);
+        // kondisi jika data berhasil di update, maka akan return ke halaman profil dengan mengirimkan status pesan sukses
+        if ($update) {
+            // perintah untuk menyimpan file foto yang sudah ditentukan
+            if ($request->hasFile('foto')) {
+                $folderpath = "public/uploads/karyawan/";
+                $request->file('foto')->storeAs($folderpath, $foto); // untuk menyimpan ke storage nya gunakan perintah ini
+            }
+            return Redirect::back()->with(['success' => 'Data Berhasil Di Update']);
+        } else {
+            return Redirect::back()->with(['error' => 'Data Gagal Di Update']);
+        }
+    }
 }

@@ -3,7 +3,16 @@
         <div class="section" id="user-section">
             <div id="user-detail">
                 <div class="avatar">
-                    <img src="assets/img/sample/avatar/avatar1.jpg" alt="avatar" class="imaged w64 rounded">
+                    <!-- jika user memiliki foto profil maka akan menggunakan foto dari database (direktori file foto) -->
+                    @if (!empty(Auth::guard('karyawan')->user()->foto))
+                    @php
+                        $path = Storage::url('uploads/karyawan/'.Auth::guard('karyawan')->user()->foto);    
+                    @endphp
+                    <img src="{{ url($path) }}" alt="avatar" class="imaged w64 rounded" style="height:64px">
+                    @else
+                    <!-- jika user tidak memiliki foto profil maka akan menggunakan default -->
+                    <img src="assets/img/sample/avatar/avatar1.jpg" alt="avatar" class="imaged w64 rounded" style="height:64px">
+                    @endif
                 </div>
                 <div id="user-info">
                     <!-- mengganti nama dan jabatan dari user yang login -->
