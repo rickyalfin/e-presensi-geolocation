@@ -40,8 +40,17 @@ class DashboardController extends Controller
         $namabulan = ["", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober",
             "November", "Desember"];
 
+        // Query menampilkan rekap izin dan sakit di dashboard
+        $rekapizin = DB::table('pengajuan_izin')
+            ->selectRaw('SUM(IF(status="i",1,0)) as jmlizin, SUM(IF(status="s",1,0)) as jmlsakit') // jumlahkan status i / izin maka hitung izin 1++, jumlahkan status s / sakit maka hitung sakit 1++
+            ->where('nik', $nik)
+            ->whereRaw('MONTH(tgl_izin)="' . $bulanini . '"')
+            ->whereRaw('YEAR(tgl_izin)="' . $tahunini . '"')
+            ->where('status_approved', 1)
+            ->first();
+
         // Mengirim data ke view (parsing)
         return view('dashboard.dashboard', compact('presensihariini', 'historybulanini', 'namabulan', 'bulanini', 'tahunini',
-            'rekappresensi', 'leaderboard'));
+            'rekappresensi', 'leaderboard', 'rekapizin'));
     }
 }
