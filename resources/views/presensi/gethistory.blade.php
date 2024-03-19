@@ -16,7 +16,7 @@
             <img src="{{ url($path) }}" alt="image" class="image">
                 <div class="in">
                     <div>
-                        <b>{{ date("d-m-Y", strtotime($d->tgl_presensi)) }} <br></b> <!-- mengubah format tangal menjadi (tanggal-bulan-tahun), dimana default dari mysql (tahun-bulan-tanggal) -->
+                        <b>{{ date("d-m-Y", strtotime($d->tgl_presensi)) }} </b><br> <!-- mengubah format tangal menjadi (tanggal-bulan-tahun), dimana default dari mysql (tahun-bulan-tanggal) -->
                         {{-- <small class="text-muted">{{ $d->jabatan }}</small> --}}
                     </div>
                     <!-- jika kondisi masuk lebih dari jam 07:00 maka warna background merah jika tidak maka hijau-->

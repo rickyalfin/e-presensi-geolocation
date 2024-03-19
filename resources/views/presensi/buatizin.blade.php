@@ -4,6 +4,25 @@
 <!-- CSS Datepicker -->
 <!-- Supaya CSS tidak berpengaruh ke form yang lain maka taruh CSS langsung di file buatizin -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+    <!-- mengatur max-heigh pada css datepicker -->
+    <!-- !important berguna apabila ketika ada 2 class yang sama, maka ketika properti yang diberi !important maka properti ini / yang diberi !important yang akan digunakan -->
+    <style>
+        .datepicker-modal{
+            max-height: 465px !important;
+        }
+
+        .datepicker-date-display{
+            background-color: #1e74fd !important;
+        }
+
+        .datepicker-done{
+            color: #1e74fd !important;
+        }
+        
+        .datepicker-cancel{
+            color: #1e74fd !important;
+        }
+    </style>
 <!-- App Header -->
 <div class="appHeader bg-primary text-light">
     <div class="left">
