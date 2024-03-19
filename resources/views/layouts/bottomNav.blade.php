@@ -1,12 +1,12 @@
 <!-- App Bottom Menu -->
     <div class="appBottomMenu">
-        <a href="/dashboard" class="item {{ request()->is ('dashboard') ? 'active' : '' }}">
+        <a href="/dashboard" class="item {{ request()->is ('dashboard') ? 'active' : '' }}"> <!-- ketika kita pilih menu dashboard di bottom menu maka akan aktif / berubah warna -->
             <div class="col">
                 <ion-icon name="home-outline"></ion-icon>
                 <strong>Home</strong>
             </div>
         </a>
-        <a href="/presensi/history" class="item">
+        <a href="/presensi/history" class="item {{ request()->is ('presensi/history') ? 'active' : '' }}"> <!-- ketika kita pilih menu history di bottom menu maka akan aktif / berubah warna -->
             <div class="col">
                 <ion-icon name="document-text-outline" role="img" class="md hydrated"
                     aria-label="document text outline"></ion-icon>
@@ -20,13 +20,13 @@
                 </div>
             </div>
         </a>
-        <a href="/presensi/izin" class="item">
+        <a href="/presensi/izin" class="item {{ request()->is ('presensi/izin') ? 'active' : '' }}"> <!-- ketika kita pilih menu dashboard di izin menu maka akan aktif / berubah warna -->
             <div class="col">
                 <ion-icon name="calendar-outline"></ion-icon>
                 <strong>Izin</strong>
             </div>
         </a>
-        <a href="/editprofile" class="item">
+        <a href="/editprofile" class="item {{ request()->is ('editprofile') ? 'active' : '' }}"> <!-- ketika kita pilih menu profile di bottom menu maka akan aktif / berubah warna -->
             <div class="col">
                 <ion-icon name="people-outline" role="img" class="md hydrated" aria-label="people outline"></ion-icon>
                 <strong>Profile</strong>
