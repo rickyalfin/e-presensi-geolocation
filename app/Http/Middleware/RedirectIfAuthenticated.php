@@ -20,8 +20,11 @@ class RedirectIfAuthenticated
         $guards = empty($guards) ? [null] : $guards;
 
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+            if (Auth::guard('karyawan')->check()) {
+                return redirect(RouteServiceProvider::HOME); // kalo kita sudah login tapi belum logout, yang diakses guard karyawan maka akan redirect ke halaman dashboard karyawan
+            }
+            if (Auth::guard('user')->check()) {
+                return redirect(RouteServiceProvider::HOMEADMIN); // kalo kita sudah login tapi belum logout, yang diakses guard user / admin maka akan ke redirect ke home admin / halaman dashboard admin
             }
         }
 
