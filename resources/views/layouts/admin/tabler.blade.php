@@ -52,5 +52,12 @@
     <!-- Tabler Core -->
     <script src="{{ asset('tabler/dist/js/tabler.min.js?1684106062') }}" defer></script>
     <script src="{{ asset('tabler/dist/js/demo.min.js?1684106062') }}" defer></script>
+    <!-- CDN JQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Supaya semua kode yang kita tulis di index.blade.php ketika kita menggunakan 'push(myscript)' kode" yang ada didalamnya nantinya akan disimpan di dalam 'stack(myscript)' -->
+    @stack('myscript')
   </body>
 </html>

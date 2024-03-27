@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 
 class KaryawanController extends Controller
 {
@@ -28,5 +30,46 @@ class KaryawanController extends Controller
         $departemen = DB::table('departemen')->get();
 
         return view('karyawan.index', compact('karyawan', 'departemen'));
+    }
+
+    public function store(Request $request)
+    {
+        $nik = $request->nik;
+        $nama_lengkap = $request->nama_lengkap;
+        $jabatan = $request->jabatan;
+        $no_hp = $request->no_hp;
+        $kode_dept = $request->kode_dept;
+        $password = Hash::make('12345');
+        // hasFile, jika kita akan mengecek apakah form yang dikirimkan ada file foto yg diupload atau tidak
+        if ($request->hasFile('foto')) {
+            $foto = $nik . "." . $request->file('foto')->getClientOriginalExtension(); // format nama foto ketika diupload
+        } else {
+            $foto = null; // jika kita tidak mengupload foto, maka data fotonya akan null atau kosong
+        }
+
+        // proses simpan data
+        try {
+            // array untuk menampung data apa saja yang akan kita simpan di database
+            $data = [
+                'nik' => $nik,
+                'nama_lengkap' => $nama_lengkap,
+                'jabatan' => $jabatan,
+                'no_hp' => $no_hp,
+                'kode_dept' => $kode_dept,
+                'foto' => $foto,
+                'password' => $password,
+            ];
+            $simpan = DB::table('karyawan')->insert($data);
+            if ($simpan) {
+                // perintah untuk menyimpan file foto yang sudah ditentukan
+                if ($request->hasFile('foto')) {
+                    $folderpath = "public/uploads/karyawan/";
+                    $request->file('foto')->storeAs($folderpath, $foto); // untuk menyimpan ke storage nya gunakan perintah ini
+                }
+                return Redirect::back()->with(['success' => 'Data Berhasil Disimpan']);
+            }
+        } catch (\Exception $e) {
+            return Redirect::back()->with(['warning' => 'Data Gagal Disimpan']);
+        }
     }
 }
