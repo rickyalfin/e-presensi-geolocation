@@ -65,4 +65,9 @@ Route::middleware(['auth:user'])->group(function () {
     Route::post('/karyawan/edit', [KaryawanController::class, 'edit']);
     Route::post('/karyawan/{nik}/update', [KaryawanController::class, 'update']);
     Route::post('/karyawan/{nik}/delete', [KaryawanController::class, 'delete']);
+
+    // Monitoring Presensi
+    Route::get('/presensi/monitoring', [PresensiController::class, 'monitoring']);
+    Route::post('/getpresensi', [PresensiController::class, 'getpresensi']);
+
 });
