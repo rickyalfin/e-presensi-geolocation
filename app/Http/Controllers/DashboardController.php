@@ -23,7 +23,7 @@ class DashboardController extends Controller
 
         // Query ini berfungsi untuk menghitung berapa kali karyawan tersebut melakukan presensi pada bulan saat ini
         $rekappresensi = DB::table('presensi')
-            ->selectRaw('COUNT(nik) as jmlhadir, SUM(IF(jam_in > "07:00",1,0)) as jmlterlambat')
+            ->selectRaw('COUNT(nik) as jmlhadir, SUM(IF(jam_in > "08:00",1,0)) as jmlterlambat')
             ->where('nik', $nik)
             ->whereRaw('MONTH(tgl_presensi)="' . $bulanini . '"')
             ->whereRaw('YEAR(tgl_presensi)="' . $tahunini . '"')
@@ -60,7 +60,7 @@ class DashboardController extends Controller
         // Query ini berfungsi untuk menghitung berapa kali karyawan tersebut melakukan presensi pada hari ini
         $hariini = date("Y-m-d");
         $rekappresensi = DB::table('presensi')
-            ->selectRaw('COUNT(nik) as jmlhadir, SUM(IF(jam_in > "07:00",1,0)) as jmlterlambat')
+            ->selectRaw('COUNT(nik) as jmlhadir, SUM(IF(jam_in > "08:00",1,0)) as jmlterlambat')
             ->where('tgl_presensi', $hariini)
             ->first();
 

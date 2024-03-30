@@ -228,8 +228,8 @@
                                             <b>{{ $d->nama_lengkap }} <br></b>
                                             <small class="text-muted">{{ $d->jabatan }}</small>
                                         </div>
-                                        <!-- jika kondisi masuk lebih dari jam 07:00 maka warna background merah jika tidak maka hijau-->
-                                        <span class="badge {{ $d->jam_in < "07:00" ? "bg-success" : "bg-danger" }}">{{ $d->jam_in }}</span>
+                                        <!-- jika kondisi masuk lebih dari jam 08:00 maka warna background merah jika tidak maka hijau-->
+                                        <span class="badge {{ $d->jam_in < "08:00" ? "bg-success" : "bg-danger" }}">{{ $d->jam_in }}</span>
                                     </div>
                                 </div>
                             </li>

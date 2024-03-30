@@ -27,8 +27,8 @@ class PresensiController extends Controller
         $jam = date("H:i:s");
         // $latitudekantor = -7.0932457259068356;
         // $longitudekantor = 110.30030361183256;
-        $latitudekantor = -7.2574719;
-        $longitudekantor = 112.7520883;
+        $latitudekantor = -7.103268;
+        $longitudekantor = 110.247721;
 
         $lokasi = $request->lokasi;
         $lokasi_user = explode(",", $lokasi);

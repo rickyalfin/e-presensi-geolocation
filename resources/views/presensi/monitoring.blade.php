@@ -32,7 +32,7 @@
                                           <path d="M16 3l0 4" /><path d="M8 3l0 4" /><path d="M4 11l16 0" /><path d="M8 15h2v2h-2z" />
                                         </svg>
                                         </span>
-                                        <input type="text" id="tanggal" name="tanggal" value="" class="form-control" placeholder="Tanggal Presensi" autocomplete="off">
+                                        <input type="text" id="tanggal" name="tanggal" value="{{ date("Y-m-d") }}" class="form-control" placeholder="Tanggal Presensi" autocomplete="off">
                                     </div>
                                 </div>
                             </div>
@@ -75,9 +75,8 @@
             format: 'yyyy-mm-dd'
         });
 
-        // Event ketika tanggal diganti maka akan otomatis data presensi pada tanggal tersebut akan diganti
-        $('#tanggal').change(function(e){
-            var tanggal = $(this).val(); // variable tanggal ini akan dipilih dari tanggal yang dipilih
+        function loadpresensi(){
+            var tanggal = $("#tanggal").val(); // variable tanggal ini akan dipilih dari tanggal yang dipilih
             $.ajax({
                 type: 'POST',
                 url: '/getpresensi',
@@ -90,8 +89,13 @@
                     $('#loadpresensi').html(respond);
                 }
             });
+        }
+        // Event ketika tanggal diganti maka akan otomatis mengeksekusi data presensi pada tanggal tersebut akan diganti
+        $('#tanggal').change(function(e){
+            loadpresensi();
         });
 
+        loadpresensi(); // mengeksekusi ketika loadpresensi ini dibuka atau dijalankan
     });
     </script>
 @endpush

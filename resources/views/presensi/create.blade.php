@@ -109,7 +109,7 @@
             var marker = L.marker([position.coords.latitude , position.coords.longitude]).addTo(map);
             // Radius lokasi -->
             // var circle = L.circle([-7.0932457259068356 , 110.30030361183256], {
-            var circle = L.circle([-7.2574719 , 112.7520883], {
+            var circle = L.circle([-7.103268, 110.247721], {
                 color: 'red',
                 fillColor: '#f03',
                 fillOpacity: 0.5,
